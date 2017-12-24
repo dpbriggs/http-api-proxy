@@ -131,7 +131,7 @@ def add_api_key(total):
 @api.route(RM_API_KEY)
 def rm_api_key(key):
     redis.delete(key)
-    return success(extra={'removed': key})
+    return success(extra={'rm': key})
 
 
 @api.route(LS_API_KEY)

@@ -96,10 +96,10 @@ $ curl http://localhost:8080/hunter2/add/10000
 To remove the API Key `bar`, use the `/rm/` action:
 ```
 
-$ curl http://localhost:8080/hunter2/ls/bar
+$ curl http://localhost:8080/hunter2/rm/bar
 {
   "message": "success", 
-  "removed": "bar"
+  "rm": "bar"
 }
 
 ```
