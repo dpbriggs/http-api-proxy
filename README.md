@@ -22,7 +22,7 @@ And visit [localhost:8080/?apiKey=hunter2](localhost:8080/?apiKey=hunter2).
 
 ## Usage
 
-Set the header `api-key` to a valid API Key. If it properly authenticates, 
+Set the header `api-key` to a valid API key. If it properly authenticates, 
 the request will passed to the host specified by `FORWARD_HOST`, and the response
 will be returned. If the `CHECK_QUERY` variable is set, the query parameter
 `$CHECK_QUERY` will be checked and authenticated.
@@ -30,7 +30,7 @@ will be returned. If the `CHECK_QUERY` variable is set, the query parameter
 ## Example Usage
 
 ```
-# Create an API Key with a quota of two.
+# Create an API key with a quota of two.
 # The admin api key is hunter2.
 $ curl localhost:8080/hunter2/add/2
 {
@@ -67,8 +67,8 @@ All API key actions follow the pattern `/<admin_api_key>/<action>/<*args>`.
 
 ### Adding API Keys
 
-To add the API Key `bar` with a usage cap of 10000, use the
-`/add/<total>/<`
+To add the API key `bar` with a usage cap of 10000, use the
+`/add/<total>/<key>` action:
 
 ```
 $ curl http://localhost:8080/hunter2/add/10000/bar
@@ -79,8 +79,7 @@ $ curl http://localhost:8080/hunter2/add/10000/bar
 }
 ```
 
-To have the server generate the key just don't include `/bar`,
-use the `/add/` action:
+To have the server generate the key only give the '/<total>':
 
 ```
 $ curl http://localhost:8080/hunter2/add/10000
@@ -93,7 +92,7 @@ $ curl http://localhost:8080/hunter2/add/10000
 
 ### Removing API Keys
 
-To remove the API Key `bar`, use the `/rm/` action:
+To remove the API key `bar`, use the `/rm/` action:
 ```
 
 $ curl http://localhost:8080/hunter2/rm/bar
@@ -105,7 +104,7 @@ $ curl http://localhost:8080/hunter2/rm/bar
 ```
 
 
-### Describing an API Key
+### Describing an API key
 
 To find the remaining API usage for the key `bar`, use
 the `/ls/` action.
