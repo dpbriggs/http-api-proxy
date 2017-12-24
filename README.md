@@ -27,7 +27,7 @@ the request will passed to the host specified by `FORWARD_HOST`, and the respons
 will be returned. If the `CHECK_QUERY` variable is set, the query parameter
 `$CHECK_QUERY` will be checked and authenticated.
 
-## Example
+## Example Usage
 
 ```
 # Create an API Key with a quota of two.
@@ -38,18 +38,21 @@ $ curl localhost:8080/hunter2/add/2
   "message": "success",
   "total": "2"
 }
+
 # Now lets use this api key
 $ curl -H "api-key:80c265a97f06446388856590c97fdc86" localhost:8080
 <!DOCTYPE html>
 <html lang=en>
   <meta charset=utf-8>
 ...(truncated)... 
+
 # Let try it again...
 $ curl -H "api-key:80c265a97f06446388856590c97fdc86" localhost:8080
 <!DOCTYPE html>
 <html lang=en>
   <meta charset=utf-8>
 ...(truncated)... 
+
 # Once more...
 $ curl -H "api-key:80c265a97f06446388856590c97fdc86" localhost:8080
 {
