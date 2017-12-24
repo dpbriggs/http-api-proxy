@@ -12,18 +12,22 @@ api = Flask(__name__)
 
 host = os.getenv('REDIS_HOST', 'localhost')
 redis = Redis(host=host, port=6379)
-admin_api_key = os.getenv('ADMIN_API_KEY')
-forward = os.getenv('FORWARD_HOST')
-forward_port = os.getenv('FORWARD_PORT', 80)
-FULL_URL = "%s:%s" % (forward, forward_port)
-header = os.getenv('CHECK_HEADER', 'api-key')
-http_auth_query = os.getenv('CHECK_QUERY')
-registered_api_keys = {}
 
-LS_API_KEY = "/%s/ls/<key>" % admin_api_key
-RM_API_KEY = "/%s/rm/<key>" % admin_api_key
-ADD_API_KEY = "/%s/add/<total>" % admin_api_key
-ADD_API_KEY_SPECIFIC = "/%s/add/<total>/<key>" % admin_api_key
+# Env settings
+ADMIN_API_KEY = os.getenv('ADMIN_API_KEY')
+FORWARD_HOST = os.getenv('FORWARD_HOST')
+FORWARD_PORT = os.getenv('FORWARD_PORT', 80)
+FULL_URL = "%s:%s" % (FORWARD_HOST, FORWARD_PORT)
+CHECK_HEADER = os.getenv('CHECK_HEADER', 'api-key')
+CHECK_QUERY = os.getenv('CHECK_QUERY')
+DEBUG = os.getenv('DEBUG')
+
+# Routes
+
+LS_API_KEY = "/%s/ls/<key>" % ADMIN_API_KEY
+RM_API_KEY = "/%s/rm/<key>" % ADMIN_API_KEY
+ADD_API_KEY = "/%s/add/<total>" % ADMIN_API_KEY
+ADD_API_KEY_SPECIFIC = "/%s/add/<total>/<key>" % ADMIN_API_KEY
 ROUTES_DESCIPTION = {
     LS_API_KEY: 'Describe the usage for <key>',
     RM_API_KEY: 'Remove the api key <key>',
@@ -31,13 +35,15 @@ ROUTES_DESCIPTION = {
     ADD_API_KEY_SPECIFIC: 'Register an API Key <key> with usage <total>',
 }
 
+# Errors
+
 SERVER_FAILED = {
     'error': 'An unknown error occured.',
     'type': 'ServerCrashed'
 }
 
 NO_API_KEY_ERROR = {
-    'error': 'No API Key Provided. Please add the \'%s\' header' % header,
+    'error': 'No API Key Provided. Please add the \'%s\' header' % CHECK_HEADER,
     'type': 'NoApiKeyGiven',
 }
 
@@ -82,12 +88,12 @@ def auth(some_function):
     @wraps(some_function)
     def check_auth(*args, **kwargs):
         try:
-            api_key = request.headers.get(header)
-            if api_key is None and http_auth_query:
-                api_key = request.args.get(http_auth_query)
+            api_key = request.headers.get(CHECK_HEADER)
+            if api_key is None and CHECK_QUERY:
+                api_key = request.args.get(CHECK_QUERY)
             if api_key is None:
                 return auth_failed(NO_API_KEY_ERROR)
-            if api_key == admin_api_key:
+            if api_key == ADMIN_API_KEY:
                 return some_function(*args, **kwargs)
             api_usage = redis.get(api_key)
             if api_usage is None:
@@ -97,7 +103,9 @@ def auth(some_function):
             # Decrement api_usage (key = api_key)
             redis.decr(api_key)
             return some_function(*args, **kwargs)
-        except:
+        except Exception as e:
+            if DEBUG:
+                raise e
             return jsonify(SERVER_FAILED), 500
     return check_auth
 
@@ -121,7 +129,7 @@ def add_api_key(total):
 
 
 @api.route(RM_API_KEY)
-def rm_api_key(key, total):
+def rm_api_key(key):
     redis.delete(key)
     return success(extra={'removed': key})
 
@@ -172,7 +180,7 @@ def proxy(path):
         resp = requests.post(url, data=request.data, **kwargs)
     elif method == 'PUT':
         resp = requests.put(url, data=request.data, **kwargs)
-    return (resp.text, resp.status_code, resp.headers.items())
+    return (resp.content, resp.status_code, resp.headers.items())
 
 
 if __name__ == "__main__":
