@@ -23,7 +23,6 @@ CHECK_QUERY = os.getenv('CHECK_QUERY')
 DEBUG = os.getenv('DEBUG')
 
 # Routes
-
 LS_API_KEY = "/%s/ls/<key>" % ADMIN_API_KEY
 RM_API_KEY = "/%s/rm/<key>" % ADMIN_API_KEY
 ADD_API_KEY = "/%s/add/<total>" % ADMIN_API_KEY
@@ -36,14 +35,11 @@ ROUTES_DESCIPTION = {
 }
 
 # Errors
-
-SERVER_FAILED = {
-    'error': 'An unknown error occured.',
-    'type': 'ServerCrashed'
-}
+SERVER_FAILED = {'error': 'An unknown error occured.', 'type': 'ServerCrashed'}
 
 NO_API_KEY_ERROR = {
-    'error': 'No API Key Provided. Please add the \'%s\' header' % CHECK_HEADER,
+    'error':
+    'No API Key Provided. Please add the \'%s\' header' % CHECK_HEADER,
     'type': 'NoApiKeyGiven',
 }
 
@@ -107,6 +103,7 @@ def auth(some_function):
             if DEBUG:
                 raise e
             return jsonify(SERVER_FAILED), 500
+
     return check_auth
 
 
